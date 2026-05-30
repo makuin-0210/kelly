@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi preciosa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030307;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Lienzo de Constelaciones Geométricas */
+        #constellation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Capa de Interfaz Cinemática */
+        .viewport-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: radial-gradient(circle, rgba(3,3,7,0) 50%, rgba(3,3,7,0.8) 100%);
+        }
+
+        /* Bloques de Texto Estructurados */
+        .message-container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .text-slide {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .text-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .phrase {
+            font-size: 2.2rem;
+            font-weight: 300;
+            line-height: 1.5;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .phrase strong {
+            font-weight: 700;
+            color: #ebd098;
+            text-shadow: 0 0 20px rgba(235, 208, 152, 0.3);
+        }
+
+        /* Clímax Visual */
+        .climax-headline {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .climax-sub {
+            font-size: 1.2rem;
+            color: #ebd098;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: 500;
+        }
+
+        /* Botón de Navegación Estilizado */
+        .nav-button {
+            position: absolute;
+            bottom: 12%;
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 2.2rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #ffffff;
+            color: #030307;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Sello de Autoría (Joaquín) */
+        .author-badge {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            text-align: right;
+            border-right: 2px solid #ebd098;
+            padding-right: 12px;
+            opacity: 0.7;
+        }
+
+        .author-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 2px;
+        }
+
+        .author-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        /* Ajustes para Dispositivos Móviles */
+        @media (max-width: 768px) {
+            .phrase { font-size: 1.6rem; }
+            .climax-headline { font-size: 2.8rem; }
+            .climax-sub { font-size: 0.9rem; }
+            .author-badge {
+                right: 50%;
+                transform: translateX(50%);
+                text-align: center;
+                border-right: none;
+                border-top: 1px solid rgba(235, 208, 152, 0.3);
+                padding-right: 0;
+                padding-top: 8px;
+                width: 80%;
+                bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Red Geométrica de Cristal Limpia -->
+    <canvas id="constellation-canvas"></canvas>
+
+    <!-- Interfaz de Contenido -->
+    <div class="viewport-layer">
+        
+        <div class="message-container">
+            <!-- Bloque 1 -->
+            <div class="text-slide active" id="slide-0">
+                <p class="phrase">"Hay bellezas que deslumbran un instante, pero tú detienes mi mundo por completo."</p>
+            </div>
+            
+            <!-- Bloque 2 -->
+            <div class="text-slide" id="slide-1">
+                <p class="phrase">No es solo cómo te ves, es tu inteligencia, tu luz y la forma en que mejoras todo a tu alrededor. Eres <strong>perfecta</strong>.</p>
+            </div>
+
+            <!-- Bloque 3 -->
+            <div class="text-slide" id="slide-2">
+                <p class="phrase">Quería darte algo único, impecable y diseñado desde cero, porque alguien tan extraordinaria merece arte real.</p>
+            </div>
+
+            <!-- Bloque 4 (Clímax) -->
+            <div class="text-slide" id="slide-3">
+                <h1 class="climax-headline">Te amo, amor</h1>
+                <p class="climax-sub">Eres mi universo entero</p>
+            </div>
+        </div>
+
+        <!-- Controlador -->
+        <button class="nav-button" id="triggerBtn">Siguiente</button>
+
+        <!-- Sello de Firma Personal -->
+        <div class="author-badge">
+            <p class="author-title">Hecho exclusivamente por</p>
+            <p class="author-name">Joaquín</p>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVEGACIÓN DE PANTALLAS ---
+        let currentIdx = 0;
+        const totalSlides = 4;
+        const triggerBtn = document.getElementById('triggerBtn');
+
+        triggerBtn.addEventListener('click', () => {
+            document.getElementById(`slide-${currentIdx}`).classList.remove('active');
+            currentIdx = (currentIdx + 1) % totalSlides;
+            
+            setTimeout(() => {
+                document.getElementById(`slide-${currentIdx}`).classList.add('active');
+            }, 600);
+
+            if (currentIdx === totalSlides - 1) {
+                triggerBtn.innerHTML = "Reiniciar";
+            } else {
+                triggerBtn.innerHTML = "Siguiente";
+            }
+        });
+
+
+        // --- MOTOR DE RED GEOMÉTRICA (Limpio y Vectorial) ---
+        const canvas = document.getElementById('constellation-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const nodes = [];
+        const maxNodes = window.innerWidth < 768 ? 45 : 90;
+        const lineThreshold = 130;
+        let mouse = { x: null, y: null, targetRadius: 180 };
+
+        // Inicializar nodos limpios
+        for (let i = 0; i < maxNodes; i++) {
+            nodes.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.6,
+                vy: (Math.random() - 0.5) * 0.6,
+                radius: Math.random() * 1.5 + 1
+            });
+        }
+
+        // Rastrear inputs táctiles y de mouse
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouse.x = e.touches[0].clientX;
+                mouse.y = e.touches[0].clientY;
+            }
+        });
+
+        window.addEventListener('touchend', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function render() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Mover y dibujar partículas cristalinas
+            nodes.forEach(n => {
+                n.x += n.vx;
+                n.y += n.vy;
+
+                // Rebote elástico en los bordes de la ventana
+                if (n.x < 0 || n.x > width) n.vx *= -1;
+                if (n.y < 0 || n.y > height) n.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fill();
+
+                // Conexiones matemáticas entre puntos vecinos
+                nodes.forEach(other => {
+                    if (n === other) return;
+                    let dx = n.x - other.x;
+                    let dy = n.y - other.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < lineThreshold) {
+                        let opacity = (1 - dist / lineThreshold) * 0.12;
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(other.x, other.y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                });
+
+                // Interacción de red magnética con el cursor
+                if (mouse.x !== null) {
+                    let mdx = n.x - mouse.x;
+                    let mdy = n.y - mouse.y;
+                    let mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+
+                    if (mDist < mouse.targetRadius) {
+                        let mOpacity = (1 - mDist / mouse.targetRadius) * 0.25;
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        // Líneas doradas sutiles que convergen al tacto
+                        ctx.strokeStyle = `rgba(235, 208, 152, ${mOpacity})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(render);
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Ejecutar bucle geométrico
+        render();
+    </script>
+</body>
+</html>
